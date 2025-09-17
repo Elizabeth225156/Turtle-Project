@@ -3,22 +3,26 @@ import turtle
 import random
 
 t = turtle.Turtle()
+#Set up the initial turtle
+t.color('white')
+t.hideturtle()
+t.speed(0)
 
-t.setpos(10, 10)
-t.circle(50)
+#background as space
+turtle.bgcolor('black')
+#Stars
+xCordStar, yCordStar
+for i in range (100):
+    xCordStar
+#Array of randomly generated values for stars
+#Draw stars w/ function
 
-# t.hideturtle()
-# t.pensize(3)
+#Planet outline
+t.penup()
+t.goto(0, -300)
+t.pendown()
+t.circle(300)
 
-# colors = 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black'
-
-# for i in range (7):
-#     t.color(colors[i - 1])
-#     t.begin_fill()
-#     for i in range (4):
-#         t.forward(50)
-#         t.left(90)
-#     t.end_fill()
-
+#Thingy for drawing the planet
 
 turtle.done()
