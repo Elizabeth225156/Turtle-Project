@@ -267,24 +267,6 @@ def draw_scene(seed=None): #Can change seed to make it the same
 
     # Clouds and occasional rings
     draw_clouds(0, 0, PLANET_RADIUS, rng, count=8 + rng.randint(0, 8))
-    # if rng.random() < 0.18:
-    #     t.width(2)
-    #     t.color("#cfcfcf")
-    #     for i in range(4):
-    #         offset = (i - 1.5) * 6
-    #         t.penup()
-    #         t.goto(-PLANET_RADIUS * 1.5, offset)
-    #         t.setheading(0)
-    #         t.pendown()
-    #         t.circle(PLANET_RADIUS * 1.5, 180)
-    #     t.width(1)
-
-    # seed label
-    t.color("white")
-    t.penup()
-    t.goto(-WIDTH//2 + 12, -HEIGHT//2 + 8)
-    t.write(f"seed: {seed}", font=("Arial", 10, "normal"))
-    t.penup()
 
     screen.update()
 
