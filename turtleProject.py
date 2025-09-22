@@ -185,20 +185,18 @@ def draw_clouds(cx, cy, radius, rng, count=10):
             t.penup()
 
 #Draw the scene onto the screen
-def draw_scene(seed=None): #Can change seed to make it the same
+def draw_scene(seed=None): #Can change seed to make it the same DOESNT WORK??
     if seed is None:
         seed = random.randint(0, 1_000_000)
     rng = random.Random(seed)
 
     draw_starfield(rng, STAR_COUNT)
 
-    # Earth-like deep blue water
     water_hex = rng.choice(["#2b6fd6", "#1b4f8b", "#1a5aa1"])
     land_choices = ["#1d5212", "#2e7b3b", "#6a5a2a"]
 
     basePlanet(0, 0, PLANET_RADIUS, water_hex, shading=True)
 
-    # Create a set of non-overlapping continent placements:
     continents = []
     attempts = 0
     target_continents = random.randint(1, 4)  # number of distinct large continents
@@ -206,7 +204,7 @@ def draw_scene(seed=None): #Can change seed to make it the same
         attempts += 1
         subseed = rng.randint(0, 2_000_000)
         subrng = random.Random(subseed)
-        avg_rad = rng.uniform(60, 110)  # size of continent hull
+        avg_rad = rng.uniform(60, 110)  # size of continent
         points = int(rng.uniform(14, 30))
         contour_local = make_contour_local(subrng, avg_radius=avg_rad, points=points, jitter=0.7, smoothing=3)
         lon = rng.uniform(0, 2*math.pi)
@@ -216,28 +214,23 @@ def draw_scene(seed=None): #Can change seed to make it the same
         rot = rng.uniform(0, 2*math.pi)
         poly = transform_to_planet(contour_local, 0, 0, PLANET_RADIUS, lon, lat, sx, sy, rot, clamp_margin=8)
 
-        # Compute bounding circle for quick overlap test
         cx_mean = sum(p[0] for p in poly)/len(poly)
         cy_mean = sum(p[1] for p in poly)/len(poly)
         max_dist = max(math.hypot(px - cx_mean, py - cy_mean) for (px, py) in poly)
-        # Ensure not too close to existing continents (keep oceans between)
         too_close = False
         for (ocx, ocy, orad) in continents:
-            if math.hypot(cx_mean - ocx, cy_mean - ocy) < (max_dist + orad + 40):  # 40px buffer = ocean gap
+            if math.hypot(cx_mean - ocx, cy_mean - ocy) < (max_dist + orad + 40): 
                 too_close = True
                 break
-        # Also ensure continent is not centered too near planet edge (so it's visible, not a thin crescent)
         if math.hypot(cx_mean, cy_mean) > PLANET_RADIUS * 0.30:
             too_close = True
         if not too_close:
             continents.append((cx_mean, cy_mean, max_dist))
-            # draw continent polygon and interior blobs
             fill_polygon(t, poly, rng.choice(land_choices))
             add_blobs_inside(t, poly, rng, 0, 0, PLANET_RADIUS,
                              blob_count=(12, 40), blob_radius=(3, 14), avoid_rim=8,
                              land_color=rng.choice(land_choices))
 
-    # Add several small island clusters (ensuring separation)
     island_clusters = 5 + rng.randint(0, 6)
     clusters = 0
     attempts = 0
@@ -253,7 +246,6 @@ def draw_scene(seed=None): #Can change seed to make it the same
         sy = rng.uniform(0.5, 1.2)
         rot = rng.uniform(0, 2*math.pi)
         poly = transform_to_planet(contour_local, 0, 0, PLANET_RADIUS, lon, lat, sx, sy, rot, clamp_margin=8)
-        # quick overlap: ensure island not inside existing continent (so it remains separate)
         cx_mean = sum(p[0] for p in poly)/len(poly)
         cy_mean = sum(p[1] for p in poly)/len(poly)
         dist_to_any = min(math.hypot(cx_mean - ocx, cy_mean - ocy) - orad for (ocx, ocy, orad) in continents) if continents else 9999
@@ -265,7 +257,7 @@ def draw_scene(seed=None): #Can change seed to make it the same
                          land_color=rng.choice(land_choices))
         clusters += 1
 
-    # Clouds and occasional rings
+    #Clouds
     draw_clouds(0, 0, PLANET_RADIUS, rng, count=8 + rng.randint(0, 8))
 
     screen.update()
